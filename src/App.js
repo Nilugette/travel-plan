@@ -30,19 +30,21 @@ const App = () => {
   }, [rating]); // apply when rating is updating
 
   useEffect(()=> {
-    setIsLoading(true);
-    getPlacesData(type, bounds.sw, bounds.ne)
-    .then((data) => {
-      setPlaces(data);
-      setFilteredPlaces([]);
-      setIsLoading(false);
-    });
-  }, [type, coords, bounds]) // apply when type or coords or bounds are updating
+    if(bounds.sw && bounds.ne) {
+      setIsLoading(true);
+      getPlacesData(type, bounds.sw, bounds.ne)
+      .then((data) => {
+        setPlaces(data?.filter((place) => place.name && place.num_reviews > 0));
+        setFilteredPlaces([]);
+        setIsLoading(false);
+      });
+    }
+  }, [type, bounds]) // apply when type or bounds are updating
   
   return (
     <>
         <CssBaseline />
-        <Header />
+        <Header setCoordinates={setCoords} />
         <Grid container spacing={3} style={{ width : '100%'}}>
           <Grid item xs={12} md={4}>
             <List 
